@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum KategoriKonten {
+  proker
+  kegiatan
+  konten
+}
+
+model Admin {
+  email    String  @id
+  password String
+}
+
+model Konten {
+  kodeKonten String         @id
+  penulis    String         // Bisa berupa nama atau NIM/email, tergantung sistem login
+  view       Int            @default(0)
+  tanggal    DateTime       @default(now())
+  isiHTML    String         @db.Text
+  kategori   KategoriKonten
+  linkGambar String?        // <-- PENAMBAHAN BARU: Link gambar (opsional)
+}
+
+model Divisi {
+  id          Int        @id @default(autoincrement())
+  nama        String     @unique
+  deskripsi   String
+  anggota     Pengurus[]
+}
+
+model Pengurus {
+  id         Int     @id @default(autoincrement())
+  nama       String
+  nim        String  @unique
+  prodi      String
+  jabatan    String
+  fotoLink   String
+  divisiId   Int
+
+  divisi     Divisi  @relation(fields: [divisiId], references: [id])
+}

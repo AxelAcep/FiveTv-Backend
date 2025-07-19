@@ -1,0 +1,36 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "module": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.7.0",
+    "@supabase/supabase-js": "^2.49.4",
+    "@types/node": "^20.9.1",
+    "axios": "^1.10.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "git": "^0.1.5",
+    "multer": "^1.4.5-lts.2",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.10",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
+    "postgres": "^3.4.5",
+    "prisma": "^6.7.0"
+  }
+}
