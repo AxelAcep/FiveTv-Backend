@@ -1,9 +1,7 @@
 const userControllers = require('./user.controller');
-const kelasControllers = require('./admin.controller');
-const recapControllers = require('./content.controller');
+const adminController = require('./admin.controller');
 
 module.exports = {
   ...userControllers,
-  ...kelasControllers,
-  ...recapControllers,
+  ...adminController,
 };

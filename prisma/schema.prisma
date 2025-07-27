@@ -8,9 +8,8 @@ datasource db {
 }
 
 enum KategoriKonten {
-  proker
   kegiatan
-  konten
+  artikel
 }
 
 model Admin {
@@ -22,6 +21,7 @@ model Konten {
   kodeKonten String         @id
   penulis    String         // Bisa berupa nama atau NIM/email, tergantung sistem login
   view       Int            @default(0)
+  viewMonth  Int            @default(0)
   tanggal    DateTime       @default(now())
   isiHTML    String         @db.Text
   kategori   KategoriKonten

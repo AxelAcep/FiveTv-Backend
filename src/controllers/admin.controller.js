@@ -112,29 +112,26 @@ const postDivisi = async (req, res) => {
 
 // --- Post Konten ---
 const postKonten = async (req, res) => {
-  // Penulis diambil dari token JWT yang sudah diverifikasi oleh middleware authenticateJWT
-  const penulis = req.user.email; // req.user diatur di middleware authenticateJWT
-  const { kategori, isiHTML } = req.body;
+  const {penulis ,kategori, isiHTML, linkGambar } = req.body; // <-- Tambahkan linkGambar di sini
 
   if (!kategori || !isiHTML) {
     return res.status(400).json({ message: "Kategori dan isi HTML konten diperlukan." });
   }
 
-  // Validasi kategori agar sesuai dengan enum Prisma
-  const validKategori = ["proker", "kegiatan", "konten"];
+  const validKategori = ["artikel", "kegiatan"];
   if (!validKategori.includes(kategori)) {
     return res.status(400).json({ message: `Kategori tidak valid. Pilih dari: ${validKategori.join(", ")}` });
   }
-  
+
   try {
     const newKonten = await prisma.konten.create({
       data: {
-        kodeKonten: generateRandomId(), // ID acak 5 karakter
+        kodeKonten: generateRandomId(),
         penulis,
         kategori,
         isiHTML,
-        view: 0, // Otomatis 0 saat dibuat
-        // tanggal: Otomatis diatur oleh @default(now()) di skema Prisma
+        linkGambar, // <-- Tambahkan ini
+        view: 0,
       },
     });
     res.status(201).json({
