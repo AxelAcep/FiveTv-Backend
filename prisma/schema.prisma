@@ -1,3 +1,5 @@
+// file: schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,7 +10,7 @@ datasource db {
 }
 
 enum KategoriKonten {
-  kegiatan
+  program
   artikel
 }
 
@@ -17,23 +19,36 @@ model Admin {
   password String
 }
 
+model Jenis {
+  id      Int      @id @default(autoincrement())
+  nama    String   @unique
+  konten  Konten[] // relasi 1 Jenis bisa punya banyak Konten
+  monthly_view Monthly_view[]
+}
+
 model Konten {
   kodeKonten String         @id
-  penulis    String         // Bisa berupa nama atau NIM/email, tergantung sistem login
+  penulis    String
+  judul      String
+  Editor     String?
+  Reporter   String?
+  linkGambar String?
   view       Int            @default(0)
   viewMonth  Int            @default(0)
   tanggal    DateTime       @default(now())
   isiHTML    String         @db.Text
   kategori   KategoriKonten
-  linkGambar String?        // <-- PENAMBAHAN BARU: Link gambar (opsional)
+
+  // 🔹 Relasi ke Jenis
+  jenisId Int?
+  jenis   Jenis?            @relation(fields: [jenisId], references: [id])
+
+  // Relasi opsional jika Konten terhubung ke WebsiteConfig
+  kontenI_config    WebsiteConfig[] @relation("KontenI_Relation")
+  kontenII_config   WebsiteConfig[] @relation("KontenII_Relation")
+  kontenIII_config  WebsiteConfig[] @relation("KontenIII_Relation")
 }
 
-model Divisi {
-  id          Int        @id @default(autoincrement())
-  nama        String     @unique
-  deskripsi   String
-  anggota     Pengurus[]
-}
 
 model Pengurus {
   id         Int     @id @default(autoincrement())
@@ -41,8 +56,41 @@ model Pengurus {
   nim        String  @unique
   prodi      String
   jabatan    String
-  fotoLink   String
-  divisiId   Int
+  fotoLink   String?
+  divisi     String
+  linkedin   String?
+  Instagram  String?
+}
 
-  divisi     Divisi  @relation(fields: [divisiId], references: [id])
+model WebsiteConfig {
+  id         Int     @id @default(autoincrement())
+  desc_satu  String?
+  desc_dua   String?
+  visi       String?
+  misi       String?
+  struktur   String?
+  instagram  String?
+  twitter    String?
+  youtube    String?
+  tiktok     String?
+  linkedin   String?
+  banner     String?
+  // Relasi yang diperbaiki
+  kontenI_id        String?
+  kontenII_id       String?
+  kontenIII_id      String?
+  
+  kontenI_data      Konten? @relation("KontenI_Relation", fields: [kontenI_id], references: [kodeKonten])
+  kontenII_data     Konten? @relation("KontenII_Relation", fields: [kontenII_id], references: [kodeKonten])
+  kontenIII_data    Konten? @relation("KontenIII_Relation", fields: [kontenIII_id], references: [kodeKonten])
+}
+
+model Monthly_view{
+  id         Int     @id @default(autoincrement())     
+  tanggal     DateTime
+
+  jenisId Int?
+  jenis   Jenis?            @relation(fields: [jenisId], references: [id])
+
+  views       Int
 }
