@@ -31,7 +31,7 @@ passport.use(new LocalStrategy(
       const token = jwt.sign(
         { email: admin.email }, // Mengubah nidn menjadi email
         process.env.JWT_SECRET,
-        { expiresIn: '1h' } // Token berlaku selama 1 jam
+        { expiresIn: '36h' } // Token berlaku selama 1 jam
       );
 
       // Mengembalikan objek admin dan token
