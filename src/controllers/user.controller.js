@@ -294,6 +294,70 @@ const searchKontenProgram = async (req, res) => {
   }
 };
 
+const getWebsiteConfigKonten = async (req, res) => {
+  try {
+    const config = await prisma.websiteConfig.findUnique({
+      where: { id: 1 },
+      select: {
+        kontenI_data: {
+          select: {
+            kodeKonten: true,
+            judul: true,
+            penulis: true,
+            linkGambar: true,
+            kategori: true,
+            isiHTML: true,
+          },
+        },
+        kontenII_data: {
+          select: {
+            kodeKonten: true,
+            judul: true,
+            penulis: true,
+            linkGambar: true,
+            kategori: true,
+            isiHTML: true,
+          },
+        },
+        kontenIII_data: {
+          select: {
+            kodeKonten: true,
+            judul: true,
+            penulis: true,
+            linkGambar: true,
+            kategori: true,
+            isiHTML: true,
+          },
+        },
+      },
+    });
+
+    if (!config) {
+      return res.status(404).json({ message: "WebsiteConfig not found" });
+    }
+
+    // Kumpulkan konten yang tidak null
+    const kontenList = [
+      config.kontenI_data,
+      config.kontenII_data,
+      config.kontenIII_data,
+    ].filter(Boolean); // buang null
+
+    if (kontenList.length === 0) {
+      return res.status(404).json({ message: "No konten available" });
+    }
+
+    // Random pilih satu konten
+    const randomIndex = Math.floor(Math.random() * kontenList.length);
+    const randomKonten = kontenList[randomIndex];
+
+    return res.json(randomKonten);
+  } catch (error) {
+    console.error("Error fetching WebsiteConfig konten:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 // Menggabungkan dan mengekspor semua fungsi
 module.exports = {
@@ -306,4 +370,6 @@ module.exports = {
   searchAllKonten,
   searchKontenArtikel,
   searchKontenProgram,
+  getWebsiteConfigKonten,
+  
 };

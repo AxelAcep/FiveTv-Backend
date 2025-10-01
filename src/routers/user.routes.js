@@ -3,7 +3,8 @@ const { passport, authenticateJWT } = require("../passport");
 const multer = require("multer");
 const upload = multer(); // pakai memory storage (buffer)
 
-const { getDashboardData, getArtikelData, getDetailByKode, getProgramData, getProfile, searchAllKonten, searchKontenArtikel, searchKontenProgram } = require("../controllers/user.controller");
+const { getDashboardData, getArtikelData, getDetailByKode, getProgramData, 
+    getProfile, searchAllKonten, searchKontenArtikel, searchKontenProgram, getWebsiteConfigKonten } = require("../controllers/user.controller");
 
 const router = express.Router();
 
@@ -15,5 +16,6 @@ router.get("/profile", getProfile)
 router.get('/search', searchAllKonten);
 router.get('/search/artikel', searchKontenArtikel);
 router.get('/search/program', searchKontenProgram);
+router.get('/rekomen', getWebsiteConfigKonten);
 
 module.exports = router;
