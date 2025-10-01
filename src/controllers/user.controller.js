@@ -155,7 +155,7 @@ const getDetailByKode = async (req, res) => {
     //    Gunakan updateMany agar tidak gagal jika ada data ganda atau masalah lain
     await prisma.konten.updateMany({
       where: { kodeKonten: String(kodeKonten) },
-      data: { view: { increment: 1 } },
+      data: { viewMonth: { increment: 1 }, view: { increment: 1 } },
     });
     
     // 4. Ambil ulang data konten dengan view yang sudah diperbarui
@@ -359,6 +359,61 @@ const getWebsiteConfigKonten = async (req, res) => {
 };
 
 
+const generateMonthlyView = async (req, res) => {
+  try {
+    // 1. Ambil semua konten dengan viewMonth > 0
+    const kontenList = await prisma.konten.findMany({
+      where: {
+        viewMonth: { gt: 0 }
+      },
+      select: {
+        viewMonth: true,
+        jenisId: true
+      }
+    });
+
+    if (kontenList.length === 0) {
+      return res.status(200).json({ message: "Tidak ada data view bulan ini" });
+    }
+
+    // 2. Kelompokkan jumlah viewMonth per jenisId
+    const viewsPerJenis = {};
+    kontenList.forEach(k => {
+      if (k.jenisId) {
+        viewsPerJenis[k.jenisId] = (viewsPerJenis[k.jenisId] || 0) + k.viewMonth;
+      }
+    });
+
+    // 3. Simpan ke Monthly_view
+    const now = new Date();
+    const monthlyRecords = await Promise.all(
+      Object.entries(viewsPerJenis).map(([jenisId, views]) =>
+        prisma.monthly_view.create({
+          data: {
+            tanggal: now,
+            jenisId: Number(jenisId),
+            views: views
+          }
+        })
+      )
+    );
+
+    // 4. Reset semua viewMonth jadi 0
+    await prisma.konten.updateMany({
+      data: { viewMonth: 0 },
+      where: { viewMonth: { gt: 0 } }
+    });
+
+    res.status(201).json({
+      message: "Monthly view berhasil digenerate",
+      data: monthlyRecords
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Terjadi kesalahan", error });
+  }
+};
+
 // Menggabungkan dan mengekspor semua fungsi
 module.exports = {
   getDashboardData,
@@ -371,5 +426,6 @@ module.exports = {
   searchKontenArtikel,
   searchKontenProgram,
   getWebsiteConfigKonten,
+  generateMonthlyView
   
 };
