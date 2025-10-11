@@ -1,96 +1,87 @@
-// file: schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Admin {
+  email    String @id
+  password String
+}
+
+model Jenis {
+  id           Int            @id @default(autoincrement())
+  nama         String         @unique
+  konten       Konten[]
+  monthly_view Monthly_view[]
+}
+
+model Konten {
+  kodeKonten       String          @id
+  penulis          String
+  view             Int             @default(0)
+  tanggal          DateTime        @default(now())
+  isiHTML          String
+  kategori         KategoriKonten
+  linkGambar       String?
+  viewMonth        Int             @default(0)
+  Editor           String?
+  Reporter         String?
+  judul            String
+  caption          String?
+  jenisId          Int?
+  jenis            Jenis?          @relation(fields: [jenisId], references: [id])
+  kontenIII_config WebsiteConfig[] @relation("KontenIII_Relation")
+  kontenII_config  WebsiteConfig[] @relation("KontenII_Relation")
+  kontenI_config   WebsiteConfig[] @relation("KontenI_Relation")
+}
+
+model Pengurus {
+  id        Int     @id @default(autoincrement())
+  nama      String
+  nim       String  @unique
+  prodi     String
+  jabatan   String
+  fotoLink  String?
+  Instagram String?
+  divisi    String
+  linkedin  String?
+}
+
+model WebsiteConfig {
+  id             Int     @id @default(autoincrement())
+  desc_satu      String?
+  desc_dua       String?
+  visi           String?
+  misi           String?
+  struktur       String?
+  instagram      String?
+  twitter        String?
+  youtube        String?
+  tiktok         String?
+  linkedin       String?
+  banner         String?
+  kontenI_id     String?
+  kontenII_id    String?
+  kontenIII_id   String?
+  kontenIII_data Konten? @relation("KontenIII_Relation", fields: [kontenIII_id], references: [kodeKonten])
+  kontenII_data  Konten? @relation("KontenII_Relation", fields: [kontenII_id], references: [kodeKonten])
+  kontenI_data   Konten? @relation("KontenI_Relation", fields: [kontenI_id], references: [kodeKonten])
+}
+
+model Monthly_view {
+  id      Int      @id @default(autoincrement())
+  views   Int
+  tanggal DateTime
+  jenisId Int?
+  jenis   Jenis?   @relation(fields: [jenisId], references: [id])
 }
 
 enum KategoriKonten {
   program
   artikel
-}
-
-model Admin {
-  email    String  @id
-  password String
-}
-
-model Jenis {
-  id      Int      @id @default(autoincrement())
-  nama    String   @unique
-  konten  Konten[] // relasi 1 Jenis bisa punya banyak Konten
-  monthly_view Monthly_view[]
-}
-
-model Konten {
-  kodeKonten String         @id
-  penulis    String
-  judul      String
-  Editor     String?
-  Reporter   String?
-  linkGambar String?
-  view       Int            @default(0)
-  viewMonth  Int            @default(0)
-  tanggal    DateTime       @default(now())
-  isiHTML    String         @db.Text
-  kategori   KategoriKonten
-
-  // 🔹 Relasi ke Jenis
-  jenisId Int?
-  jenis   Jenis?            @relation(fields: [jenisId], references: [id])
-
-  // Relasi opsional jika Konten terhubung ke WebsiteConfig
-  kontenI_config    WebsiteConfig[] @relation("KontenI_Relation")
-  kontenII_config   WebsiteConfig[] @relation("KontenII_Relation")
-  kontenIII_config  WebsiteConfig[] @relation("KontenIII_Relation")
-}
-
-
-model Pengurus {
-  id         Int     @id @default(autoincrement())
-  nama       String
-  nim        String  @unique
-  prodi      String
-  jabatan    String
-  fotoLink   String?
-  divisi     String
-  linkedin   String?
-  Instagram  String?
-}
-
-model WebsiteConfig {
-  id         Int     @id @default(autoincrement())
-  desc_satu  String?
-  desc_dua   String?
-  visi       String?
-  misi       String?
-  struktur   String?
-  instagram  String?
-  twitter    String?
-  youtube    String?
-  tiktok     String?
-  linkedin   String?
-  banner     String?
-  // Relasi yang diperbaiki
-  kontenI_id        String?
-  kontenII_id       String?
-  kontenIII_id      String?
-  
-  kontenI_data      Konten? @relation("KontenI_Relation", fields: [kontenI_id], references: [kodeKonten])
-  kontenII_data     Konten? @relation("KontenII_Relation", fields: [kontenII_id], references: [kodeKonten])
-  kontenIII_data    Konten? @relation("KontenIII_Relation", fields: [kontenIII_id], references: [kodeKonten])
-}
-
-model Monthly_view{
-  id         Int     @id @default(autoincrement())     
-  tanggal     DateTime
-
-  jenisId Int?
-  jenis   Jenis?            @relation(fields: [jenisId], references: [id])
-
-  views       Int
 }

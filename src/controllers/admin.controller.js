@@ -287,7 +287,8 @@ const createKonten = async (req, res) => {
       linkGambar,
       kategori,  // "program" atau "artikel"
       jenisId,   // opsional, bisa null
-      isiHTML
+      isiHTML,
+      caption,
     } = req.body;
 
     // Validasi minimal
@@ -308,7 +309,8 @@ const createKonten = async (req, res) => {
         linkGambar: linkGambar || null,
         kategori,
         jenisId: jenisId || null,
-        isiHTML
+        isiHTML,
+        caption: caption || null,
       },
     });
 
@@ -340,6 +342,7 @@ const getKontenByKode = async (req, res) => {
         jenisId: true,
         jenis: { select: { nama: true } },
         isiHTML: true,
+        caption: true,
       },
     });
 
@@ -366,7 +369,8 @@ const updateKonten = async (req, res) => {
       linkGambar,
       kategori,
       jenisId,
-      isiHTML
+      isiHTML,
+      caption,
     } = req.body;
 
     // Pastikan konten ada
@@ -386,6 +390,7 @@ const updateKonten = async (req, res) => {
         kategori: kategori || existingKonten.kategori,
         jenisId: jenisId ?? existingKonten.jenisId,
         isiHTML: isiHTML || existingKonten.isiHTML,
+        caption: caption ?? existingKonten.caption,
       },
     });
 
